@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { createRestaurantDto } from './dtos/create-restaurant.dto';
 import { Restaurant } from './entities/restaurant.entity';
 
 @Injectable()
@@ -13,5 +14,11 @@ export class RestaurantsService {
   //find는 async메소드여서 return타입에 Promise를 넣어줘야 함
   getAll(): Promise<Restaurant[]> {
     return this.restaurants.find();
+  }
+  createRestaurant(
+    createRestaurantDto: createRestaurantDto,
+  ): Promise<Restaurant> {
+    const newRestaurant = this.restaurants.create(createRestaurantDto);
+    return this.restaurants.save(newRestaurant);
   }
 }

@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 //entity와 graphql의 스키마를 함께 만들 수 있다
@@ -11,11 +12,16 @@ export class Restaurant {
 
   @Field((is) => String)
   @Column()
+  @IsString()
+  @Length(5, 10)
   name: string;
 
-  @Field((is) => Boolean, { nullable: true })
-  @Column()
-  isVegan?: boolean;
+  //default value설정예시
+  @Field((is) => Boolean, { defaultValue: true })
+  @Column({ default: true })
+  @IsBoolean()
+  @IsOptional()
+  isVegan: boolean;
 
   @Field((is) => String)
   @Column()
