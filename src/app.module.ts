@@ -8,7 +8,6 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 
 @Module({
-  //graphQL 모듈 임포트
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
@@ -32,6 +31,7 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
       //참조할 엔티티
       entities: [Restaurant],
     }),
+    //graphQL 모듈 임포트
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       //?자동으로 스키마 파일 생성(true일시 메모리상에 생성, 디렉토리일시 해당 디렉토리에 파일로 생성)
