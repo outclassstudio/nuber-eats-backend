@@ -4,11 +4,14 @@ import { Repository } from 'typeorm';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
+import { JwtService } from 'src/jwt/jwt.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    //dependency injection
+    private readonly jwtService: JwtService,
   ) {}
 
   async createAccount({
@@ -46,6 +49,7 @@ export class UsersService {
           error: 'User nof found',
         };
       }
+      //repotsitory상의 user가 아닌, users class로 생성된 위의 'user'임 차의에 유의
       const passwordCorrect = await user.checkPassword(password);
       if (!passwordCorrect) {
         return {
@@ -53,9 +57,11 @@ export class UsersService {
           error: 'Wrong password',
         };
       }
+      //토큰생성
+      const token = this.jwtService.sign(user.id);
       return {
         ok: true,
-        token: 'ganadara',
+        token,
       };
     } catch (error) {
       return {
