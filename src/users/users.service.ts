@@ -5,6 +5,7 @@ import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
+import { EditProfileInput } from './dtos/edit-profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -59,6 +60,7 @@ export class UsersService {
       }
       //토큰생성
       const token = this.jwtService.sign(user.id);
+      // console.log('토큰머하니', token);
       return {
         ok: true,
         token,
@@ -73,5 +75,11 @@ export class UsersService {
 
   async findById(id: number): Promise<User> {
     return this.users.findOne({ where: { id } });
+  }
+
+  //로그인 한 경우가 아니면 유저정보를 수정하려 하지 않을 것임
+  async editProfile(userId: number, { email, password }: EditProfileInput) {
+    //?db존재 여부와 관계없이 수행
+    return this.users.update({ id: userId }, { email, password });
   }
 }
