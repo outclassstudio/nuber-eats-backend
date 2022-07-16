@@ -5,7 +5,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { BeforeInsert, Column, Entity } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
 import { IsEmail, IsEnum, IsString } from 'class-validator';
@@ -41,7 +41,9 @@ export class User extends CoreEntity {
   role: UserRole;
 
   //listener : entity에 이벤트가 발생할 때 실행됨
+  //db수정 있을 시 BeforeUpdate필요
   @BeforeInsert()
+  @BeforeUpdate()
   async hashPassword(): Promise<void> {
     //hash round의 기본값은 10
     try {

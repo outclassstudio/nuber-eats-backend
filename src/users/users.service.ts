@@ -78,8 +78,21 @@ export class UsersService {
   }
 
   //로그인 한 경우가 아니면 유저정보를 수정하려 하지 않을 것임
-  async editProfile(userId: number, { email, password }: EditProfileInput) {
+  async editProfile(
+    id: number,
+    { email, password }: EditProfileInput,
+  ): Promise<User> {
     //?db존재 여부와 관계없이 수행
-    return this.users.update({ id: userId }, { email, password });
+    //!save vs update
+    //?update의 경우 rest syntax를 활용해서 입력값을 넘긴다(why?)
+    // return this.users.update({ id: userId }, { ...editProfileInput });
+    const user = await this.users.findOne({ where: { id } });
+    if (email) {
+      user.email = email;
+    }
+    if (password) {
+      user.password = password;
+    }
+    return this.users.save(user);
   }
 }
