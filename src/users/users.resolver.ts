@@ -8,7 +8,8 @@ import {
 } from './dtos/create-account.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
-import { UserPorfileOutput, UserProfileInput } from './dtos/user-profile.dto';
+import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
+import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
@@ -23,11 +24,11 @@ export class UserResolver {
   }
 
   //query가 리턴하는 것과 함수가 리턴하는 것을 잘 비교
-  @Query((returns) => UserPorfileOutput)
+  @Query((returns) => UserProfileOutput)
   @UseGuards(AuthGuard)
   async userProfile(
     @Args() userProfileInput: UserProfileInput,
-  ): Promise<UserPorfileOutput> {
+  ): Promise<UserProfileOutput> {
     try {
       console.log(userProfileInput);
       const user = await this.userSerivce.findById(userProfileInput.userId);
@@ -96,5 +97,10 @@ export class UserResolver {
         error,
       };
     }
+  }
+
+  @Mutation((returns) => VerifyEmailOutput)
+  verifyEmail(@Args('input') verifyEmailInput: VerifyEmailInput) {
+    this.userSerivce.verifyEmail(verifyEmailInput.code);
   }
 }

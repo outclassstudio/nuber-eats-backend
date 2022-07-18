@@ -15,6 +15,7 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
+import { Verification } from './users/entities/verification.entity';
 
 @Module({
   imports: [
@@ -44,7 +45,7 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
       //참조할 엔티티
-      entities: [User],
+      entities: [User, Verification],
     }),
     //graphQL 모듈 임포트
     GraphQLModule.forRoot({

@@ -40,6 +40,10 @@ export class User extends CoreEntity {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @Column({ default: false })
+  @Field((type) => Boolean)
+  verified: boolean;
+
   //listener : entity에 이벤트가 발생할 때 실행됨
   //db수정 있을 시 BeforeUpdate필요
   @BeforeInsert()

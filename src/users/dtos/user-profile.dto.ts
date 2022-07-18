@@ -10,7 +10,7 @@ export class UserProfileInput {
 
 //mutation output을 쓰면 error와 ok를 쓸 수 있음
 @ObjectType()
-export class UserPorfileOutput extends CoreOutput {
+export class UserProfileOutput extends CoreOutput {
   @Field((type) => User, { nullable: true })
   user?: User;
 }
