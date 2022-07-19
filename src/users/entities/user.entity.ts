@@ -29,7 +29,7 @@ export class User extends CoreEntity {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @Field((type) => String)
   @IsString()
   password: string;
@@ -50,11 +50,13 @@ export class User extends CoreEntity {
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
     //hash round의 기본값은 10
-    try {
-      this.password = await bcrypt.hash(this.password, 10);
-    } catch (e) {
-      console.log(e);
-      throw new InternalServerErrorException();
+    if (this.password) {
+      try {
+        this.password = await bcrypt.hash(this.password, 10);
+      } catch (e) {
+        console.log(e);
+        throw new InternalServerErrorException();
+      }
     }
   }
 

@@ -26,81 +26,37 @@ export class UserResolver {
   //query가 리턴하는 것과 함수가 리턴하는 것을 잘 비교
   @Query((returns) => UserProfileOutput)
   @UseGuards(AuthGuard)
-  async userProfile(
+  userProfile(
     @Args() userProfileInput: UserProfileInput,
   ): Promise<UserProfileOutput> {
-    try {
-      console.log(userProfileInput);
-      const user = await this.userSerivce.findById(userProfileInput.userId);
-      if (!user) {
-        throw Error();
-      }
-      return {
-        ok: true,
-        user,
-      };
-    } catch (error) {
-      return {
-        error: 'User Not Found',
-        ok: false,
-      };
-    }
+    return this.userSerivce.findById(userProfileInput.userId);
   }
 
   @Mutation((returns) => CreateAccountOutput)
-  async createAccount(
+  createAccount(
     @Args('input') createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
-    try {
-      //service에서 처리 결과를 받아서
-      const { ok, error } = await this.userSerivce.createAccount(
-        createAccountInput,
-      );
-      //각각의 값을 리턴한다.
-      return {
-        ok,
-        error,
-      };
-    } catch (error) {
-      return {
-        error,
-        ok: false,
-      };
-    }
+    return this.userSerivce.createAccount(createAccountInput);
   }
 
   @Mutation((returns) => LoginOutput)
-  async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
-    try {
-      const { ok, error, token } = await this.userSerivce.login(loginInput);
-      return { ok, error, token };
-    } catch (error) {
-      return { ok: false, error };
-    }
+  login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
+    return this.userSerivce.login(loginInput);
   }
 
   @Mutation((returns) => EditProfileOutput)
   @UseGuards(AuthGuard)
-  async editProfile(
+  editProfile(
     @AuthUser() authUser: User,
     @Args('input') editProfileInput: EditProfileInput,
   ): Promise<EditProfileOutput> {
-    try {
-      // console.log(editProfileInput);
-      await this.userSerivce.editProfile(authUser.id, editProfileInput);
-      return {
-        ok: true,
-      };
-    } catch (error) {
-      return {
-        ok: false,
-        error,
-      };
-    }
+    return this.userSerivce.editProfile(authUser.id, editProfileInput);
   }
 
   @Mutation((returns) => VerifyEmailOutput)
-  verifyEmail(@Args('input') verifyEmailInput: VerifyEmailInput) {
-    this.userSerivce.verifyEmail(verifyEmailInput.code);
+  verifyEmail(
+    @Args('input') verifyEmailInput: VerifyEmailInput,
+  ): Promise<VerifyEmailOutput> {
+    return this.userSerivce.verifyEmail(verifyEmailInput.code);
   }
 }
