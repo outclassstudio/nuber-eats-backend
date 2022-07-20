@@ -19,7 +19,7 @@ export class UsersService {
     @InjectRepository(User) private readonly users: Repository<User>,
     //데코레이터 빼먹으면 안됨!!
     @InjectRepository(Verification)
-    private readonly verification: Repository<Verification>,
+    private readonly verifications: Repository<Verification>,
     //dependency injection
     private readonly jwtService: JwtService,
   ) {}
@@ -38,8 +38,8 @@ export class UsersService {
       const user = await this.users.save(
         this.users.create({ email, password, role }),
       );
-      await this.verification.save(
-        this.verification.create({
+      await this.verifications.save(
+        this.verifications.create({
           user,
         }),
       );
@@ -119,7 +119,7 @@ export class UsersService {
       if (email) {
         user.email = email;
         user.verified = false;
-        await this.verification.save(this.verification.create({ user }));
+        await this.verifications.save(this.verifications.create({ user }));
       }
       if (password) {
         user.password = password;
@@ -138,7 +138,7 @@ export class UsersService {
 
   async verifyEmail(code: string): Promise<VerifyEmailOutput> {
     try {
-      const verification = await this.verification.findOne({
+      const verification = await this.verifications.findOne({
         where: { code },
         //id만 받아오기
         //loadRelationIds: true,
@@ -147,12 +147,16 @@ export class UsersService {
       });
       if (verification) {
         verification.user.verified = true;
-        this.users.save(verification.user);
+        await this.users.save(verification.user);
+        await this.verifications.delete(verification.id);
         return {
           ok: true,
         };
       }
-      throw new Error();
+      return {
+        ok: false,
+        error: 'Verification not found.',
+      };
     } catch (error) {
       console.log(error);
       return {
