@@ -41,6 +41,7 @@
     "graphql": "^16.5.0",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
+    "mailgun.js": "^7.0.4",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
@@ -72,6 +73,9 @@
     "typescript": "^4.3.5"
   },
   "jest": {
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
     "moduleFileExtensions": [
       "js",
       "json",
@@ -86,6 +90,16 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      ".entity.ts",
+      ".constants.ts",
+      ".module.ts",
+      ".dto.ts",
+      ".decorator.ts",
+      ".guard.ts",
+      ".middleware.ts"
+    ]
   }
 }
