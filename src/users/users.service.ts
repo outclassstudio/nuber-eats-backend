@@ -93,7 +93,7 @@ export class UsersService {
 
   async findById(id: number): Promise<UserProfileOutput> {
     try {
-      const user = await this.users.findOne({
+      const user = await this.users.findOneOrFail({
         where: { id },
       });
       return {
@@ -103,7 +103,7 @@ export class UsersService {
     } catch (error) {
       return {
         ok: false,
-        error,
+        error: '유저가 존재하지 않습니다',
       };
     }
   }
@@ -137,7 +137,7 @@ export class UsersService {
     } catch (error) {
       return {
         ok: false,
-        error,
+        error: '프로필을 업데이트 하지 못했어요',
       };
     }
   }
@@ -164,10 +164,9 @@ export class UsersService {
         error: 'Verification not found.',
       };
     } catch (error) {
-      console.log(error);
       return {
         ok: false,
-        error,
+        error: '인증에 실패했어요',
       };
     }
   }
