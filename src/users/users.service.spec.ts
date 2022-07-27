@@ -29,11 +29,12 @@ const mockMailService = {
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
 describe('UsersService', () => {
+  //불러올 서비스와 레포지토리 타입지정
   let service: UsersService;
-  let userRepository: MockRepository<User>;
-  let verificationRepository: MockRepository<Verification>;
   let mailService: MailService;
   let jwtService: JwtService;
+  let userRepository: MockRepository<User>;
+  let verificationRepository: MockRepository<Verification>;
 
   //테스트 모듈 생성
   beforeEach(async () => {
@@ -58,6 +59,8 @@ describe('UsersService', () => {
         },
       ],
     }).compile();
+
+    //서비스와 레포지토리 불러오기
     service = module.get<UsersService>(UsersService);
     mailService = module.get<MailService>(MailService);
     jwtService = module.get<JwtService>(JwtService);
@@ -65,6 +68,7 @@ describe('UsersService', () => {
     verificationRepository = module.get(getRepositoryToken(Verification));
   });
 
+  //가장 기본적인 테스트
   it('Should be defined', () => {
     expect(service).toBeDefined();
   });
