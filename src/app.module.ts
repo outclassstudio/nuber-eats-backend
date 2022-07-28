@@ -26,7 +26,7 @@ import { MailModule } from './mail/mail.module';
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
       validationSchema: Joi.object({
         //배열로 쓰는거 아님
-        NODE_ENV: Joi.string().valid('dev', 'prod'),
+        NODE_ENV: Joi.string().valid('dev', 'prod', 'test'),
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.string().required(),
         DB_USERNAME: Joi.string().required(),
@@ -47,7 +47,8 @@ import { MailModule } from './mail/mail.module';
       database: process.env.DB_DATABASE,
       //데이터베이스와 동기화
       synchronize: process.env.NODE_ENV !== 'prod',
-      logging: true,
+      logging:
+        process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       //참조할 엔티티
       entities: [User, Verification],
     }),
