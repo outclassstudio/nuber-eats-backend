@@ -20,8 +20,10 @@ export class JwtMiddleware implements NestMiddleware {
         //token이 array를 취할수도 있기 때문에 string으로 변환
         const decoded = this.jwtService.verify(token.toString());
         if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
-          const user = await this.userService.findById(decoded['id']);
-          req['user'] = user;
+          const { user, ok } = await this.userService.findById(decoded['id']);
+          if (ok) {
+            req['user'] = user;
+          }
         }
       } catch (error) {}
     }

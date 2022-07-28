@@ -122,6 +122,8 @@ export class UsersService {
       if (email) {
         user.email = email;
         user.verified = false;
+        //todo 로직 수정한 부분 복습 필요(testing editProfile resolver)
+        await this.verifications.delete({ user: { id: user.id } });
         const verification = await this.verifications.save(
           this.verifications.create({ user }),
         );
