@@ -1,37 +1,38 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { IsString } from 'class-validator';
+import { CoreEntity } from 'src/common/entities/core.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { Category } from './category.entity';
 
-//entity와 graphql의 스키마를 함께 만들 수 있다
+//entity와 graphql의 스키마 dto를 함께 만들 수 있다
+@InputType('RestaurantInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
-export class Restaurant {
-  @Field((type) => Number)
-  @PrimaryGeneratedColumn()
-  id: number;
+export class Restaurant extends CoreEntity {
+  @Field((is) => String)
+  @Column()
+  @IsString()
+  name: string;
 
   @Field((is) => String)
   @Column()
   @IsString()
-  @Length(5, 10)
-  name: string;
-
-  //default value설정예시
-  @Field((is) => Boolean, { defaultValue: true })
-  @Column({ default: true })
-  @IsBoolean()
-  @IsOptional()
-  isVegan: boolean;
+  address: string;
 
   @Field((is) => String)
   @Column()
-  address: string;
+  coverImg: string;
 
-  @Field((type) => String)
-  @Column()
-  ownerName: string;
+  //?관계 설정시 두번째 인자에 FK도 함께 적용시켜줘야 한다
+  @Field((type) => Category, { nullable: true })
+  @ManyToOne((type) => Category, (category) => category.restaurants, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  category: Category;
 
-  @Field((type) => String)
-  @Column()
-  categoryName: string;
+  @Field((type) => User)
+  @ManyToOne((type) => User, (user) => user.restaurants)
+  owner: User;
 }

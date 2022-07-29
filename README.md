@@ -18,3 +18,10 @@ The backend of Nuber Eats
 - See Profile
 - Edit Profile
 - Verity Email
+
+## Restaurant Entity
+
+- name
+- category
+- address
+- coverImage
