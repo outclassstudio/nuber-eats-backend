@@ -17,6 +17,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
+import { Category } from './restaurants/entities/category.entity';
 
 @Module({
   imports: [
@@ -50,7 +51,7 @@ import { MailModule } from './mail/mail.module';
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       //참조할 엔티티
-      entities: [User, Verification],
+      entities: [User, Verification, Restaurant, Category],
     }),
     //graphQL 모듈 임포트
     GraphQLModule.forRoot({
@@ -60,6 +61,7 @@ import { MailModule } from './mail/mail.module';
       context: ({ req }) => ({ user: req['user'] }),
     }),
     UsersModule,
+    RestaurantsModule,
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
     }),
