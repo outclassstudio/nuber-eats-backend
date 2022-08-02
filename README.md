@@ -14,10 +14,15 @@ The backend of Nuber Eats
 ## User CRUD:
 
 - Crreate Account
-- Log Inn
+- Log In
 - See Profile
 - Edit Profile
 - Verity Email
+
+## Category
+
+- See Categories
+- See Restaurant by Category(with pagination)
 
 ## Restaurant Entity
 
@@ -25,3 +30,15 @@ The backend of Nuber Eats
 - category
 - address
 - coverImage
+
+## Restaurant CRUD
+
+- See Restaurnats(with pagination)
+- See Restaurant
+- Create Restaurant
+- Edit Reestaurant
+- Delete Restaurant
+
+- Create Dish
+- Edit Dish
+- Delete Dish
