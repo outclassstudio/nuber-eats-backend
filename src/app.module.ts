@@ -20,6 +20,8 @@ import { MailModule } from './mail/mail.module';
 import { Category } from './restaurants/entities/category.entity';
 import { AuthModule } from './auth/auth.module';
 import { Dish } from './restaurants/entities/dish.entity';
+import { OrdersModule } from './orders/orders.module';
+import { Order } from './orders/entities/orders.entity';
 
 @Module({
   imports: [
@@ -53,7 +55,7 @@ import { Dish } from './restaurants/entities/dish.entity';
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       //참조할 엔티티
-      entities: [User, Verification, Restaurant, Category, Dish],
+      entities: [User, Verification, Restaurant, Category, Dish, Order],
     }),
     //graphQL 모듈 임포트
     GraphQLModule.forRoot({
@@ -73,6 +75,7 @@ import { Dish } from './restaurants/entities/dish.entity';
       domain: process.env.MAILGUN_DOMAIN_NAME,
     }),
     AuthModule,
+    OrdersModule,
   ],
   controllers: [],
   providers: [],
