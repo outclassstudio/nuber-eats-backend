@@ -3,10 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Dish } from 'src/restaurants/entities/dish.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
-import { User } from 'src/users/entities/user.entity';
+import { User, UserRole } from 'src/users/entities/user.entity';
 import { Order } from './entities/orders.entity';
 import { CreateOrderInput, CreateOrderOutput } from './dtos/create-order.dto';
 import { OrderItem } from './entities/order-item.entity';
+import { GetOrdersInput, GetOrdersOutput } from './dtos/get-orders.dto';
+import { GetOrderInput, GetOrderOutput } from './dtos/get-order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -91,6 +93,71 @@ export class OrdersService {
       return {
         ok: false,
         error: '주문을 만들짐 못했어요',
+      };
+    }
+  }
+
+  async getOrders(
+    user: User,
+    { status }: GetOrdersInput,
+  ): Promise<GetOrdersOutput> {
+    try {
+      let orders: Order[];
+      if (user.role === UserRole.Client) {
+        orders = await this.orders.find({
+          where: {
+            customer: { id: user.id },
+            ...(status && { status }),
+          },
+        });
+      } else if (user.role === UserRole.Delivery) {
+        orders = await this.orders.find({
+          where: {
+            driver: { id: user.id },
+            ...(status && { status }),
+          },
+        });
+      } else if (user.role === UserRole.Owner) {
+        //!작동테스트해야함
+        orders = await this.orders.find({
+          where: {
+            restaurant: { owner: { id: user.id } },
+            ...(status && { status }),
+          },
+        });
+      }
+      return {
+        ok: true,
+        orders,
+      };
+    } catch (error) {
+      return {
+        ok: true,
+      };
+    }
+  }
+
+  async getOrder(
+    user: User,
+    { id: orderId }: GetOrderInput,
+  ): Promise<GetOrderOutput> {
+    try {
+      const order = await this.orders.findOne({ where: { id: orderId } });
+      if (!order) {
+        return {
+          ok: false,
+          error: '주문을 찾을 수 없어요',
+        };
+      }
+      if (
+        order.customer.id !== user.id &&
+        order.driver.id !== user.id &&
+        order.restaurant.ownerId !== user.id
+      ) {
+      }
+    } catch (error) {
+      return {
+        ok: true,
       };
     }
   }
