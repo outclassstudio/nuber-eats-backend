@@ -4,11 +4,12 @@ import { Repository } from 'typeorm';
 import { Dish } from 'src/restaurants/entities/dish.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User, UserRole } from 'src/users/entities/user.entity';
-import { Order } from './entities/orders.entity';
+import { Order, OrderStatus } from './entities/orders.entity';
 import { CreateOrderInput, CreateOrderOutput } from './dtos/create-order.dto';
 import { OrderItem } from './entities/order-item.entity';
 import { GetOrdersInput, GetOrdersOutput } from './dtos/get-orders.dto';
 import { GetOrderInput, GetOrderOutput } from './dtos/get-order.dto';
+import { EditOrderInput, EditOrderOutput } from './dtos/edit-order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -118,7 +119,7 @@ export class OrdersService {
           },
         });
       } else if (user.role === UserRole.Owner) {
-        //!작동테스트해야함
+        //!강의와 로직 다른 부분 작동테스트해야함
         orders = await this.orders.find({
           where: {
             restaurant: { owner: { id: user.id } },
@@ -137,6 +138,20 @@ export class OrdersService {
     }
   }
 
+  canSeeOrder(user: User, order: Order): boolean {
+    let canSee = true;
+    if (user.role === UserRole.Client && order.customerId !== user.id) {
+      canSee = false;
+    }
+    if (user.role === UserRole.Delivery && order.driverId !== user.id) {
+      canSee = false;
+    }
+    if (user.role === UserRole.Owner && order.restaurant.ownerId !== user.id) {
+      canSee = false;
+    }
+    return canSee;
+  }
+
   async getOrder(
     user: User,
     { id: orderId }: GetOrderInput,
@@ -149,15 +164,82 @@ export class OrdersService {
           error: '주문을 찾을 수 없어요',
         };
       }
-      if (
-        order.customer.id !== user.id &&
-        order.driver.id !== user.id &&
-        order.restaurant.ownerId !== user.id
-      ) {
+      if (!this.canSeeOrder(user, order)) {
+        return {
+          ok: false,
+          error: '주문을 볼 수 없어요',
+        };
       }
-    } catch (error) {
       return {
         ok: true,
+        order,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: '주문을 조회할 수 없어요',
+      };
+    }
+  }
+
+  async editOrder(
+    user: User,
+    { id: orderId, status }: EditOrderInput,
+  ): Promise<EditOrderOutput> {
+    try {
+      const order = await this.orders.findOne({
+        where: { id: orderId },
+        relations: ['restaurant'],
+      });
+      if (!order) {
+        return {
+          ok: false,
+          error: '주문을 찾을 수 없어요',
+        };
+      }
+      if (!this.canSeeOrder(user, order)) {
+        return {
+          ok: false,
+          error: '주문을 볼 수 없어요',
+        };
+      }
+      let canEdit = true;
+      if (user.role === UserRole.Client) {
+        canEdit = false;
+      }
+      if (user.role === UserRole.Owner) {
+        if (status !== OrderStatus.Cooking && status !== OrderStatus.Cooked) {
+          canEdit = false;
+        }
+      }
+      if (user.role === UserRole.Delivery) {
+        if (
+          status !== OrderStatus.PickedUp &&
+          status !== OrderStatus.Delivered
+        ) {
+          canEdit = false;
+        }
+      }
+      if (!canEdit) {
+        return {
+          ok: false,
+          error: '주문을 수정할 수 없어요',
+        };
+      }
+      //!얘 왜 배열이지?
+      await this.orders.save([
+        {
+          id: orderId,
+          status,
+        },
+      ]);
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
       };
     }
   }
