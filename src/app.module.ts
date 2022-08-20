@@ -69,9 +69,17 @@ import { OrderItem } from './orders/entities/order-item.entity';
     //graphQL 모듈 임포트
     GraphQLModule.forRoot({
       driver: ApolloDriver,
+      //!서버가 웹소켓 기능을 갖게됨
+      installSubscriptionHandlers: true,
       //?자동으로 스키마 파일 생성(true일시 메모리상에 생성, 디렉토리일시 해당 디렉토리에 파일로 생성)
       autoSchemaFile: true,
-      context: ({ req }) => ({ user: req['user'] }),
+      context: ({ req, connection }) => {
+        if (req) {
+          return { user: req['user'] };
+        } else {
+          console.log(connection);
+        }
+      },
     }),
     UsersModule,
     RestaurantsModule,
