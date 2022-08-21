@@ -23,6 +23,9 @@ import { Dish } from './restaurants/entities/dish.entity';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/orders.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
+import { CommonModule } from './common/common.module';
+
+const TOKEN_KEY = 'x-jwt';
 
 @Module({
   imports: [
@@ -69,16 +72,22 @@ import { OrderItem } from './orders/entities/order-item.entity';
     //graphQL 모듈 임포트
     GraphQLModule.forRoot({
       driver: ApolloDriver,
-      //!서버가 웹소켓 기능을 갖게됨
-      installSubscriptionHandlers: true,
       //?자동으로 스키마 파일 생성(true일시 메모리상에 생성, 디렉토리일시 해당 디렉토리에 파일로 생성)
       autoSchemaFile: true,
+      //!서버가 웹소켓 기능을 갖게됨
+      installSubscriptionHandlers: true,
+      subscriptions: {
+        'subscriptions-transport-ws': {
+          onConnect: (connectionParams) => {
+            const token = connectionParams[TOKEN_KEY];
+            return { token };
+          },
+        },
+      },
       context: ({ req, connection }) => {
-        if (req) {
-          return { user: req['user'] };
-        } else {
-          console.log(connection);
-        }
+        return {
+          token: req ? req.headers[TOKEN_KEY] : connection.context[TOKEN_KEY],
+        };
       },
     }),
     UsersModule,
@@ -93,16 +102,19 @@ import { OrderItem } from './orders/entities/order-item.entity';
     }),
     AuthModule,
     OrdersModule,
+    //!Global로 지정하더라도 appModule에 불러와야 한다
+    CommonModule,
   ],
   controllers: [],
   providers: [],
 })
 //특정경로에만 미들웨어를 적용하고 싶을때의 예시
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JwtMiddleware).forRoutes({
-      path: '/graphql',
-      method: RequestMethod.ALL,
-    });
-  }
-}
+export class AppModule {}
+
+// implements NestModule
+// configure(consumer: MiddlewareConsumer) {
+//   consumer.apply(JwtMiddleware).forRoutes({
+//     path: '/graphql',
+//     method: RequestMethod.ALL,
+//   });
+// }
