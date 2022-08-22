@@ -42,3 +42,12 @@ The backend of Nuber Eats
 - Create Dish
 - Edit Dish
 - Delete Dish
+
+## Order
+
+- Orders Subscription:
+  - Pending Orders(Owner) (t: createOrder(newOrder))
+  - Order status(Customer, Delivery, Owner) (s: orderUpdate) (t: editOrder)
+  - Pending Pickup Order(Delivery) (s: orderUpdate) (t: editOrder)
+
+## Payments
