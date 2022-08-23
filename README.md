@@ -50,4 +50,4 @@ The backend of Nuber Eats
   - Order status(Customer, Delivery, Owner) (s: orderUpdate) (t: editOrder)
   - Pending Pickup Order(Delivery) (s: orderUpdate) (t: editOrder)
 
-## Payments
+## Payments(CRON)
