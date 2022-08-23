@@ -37,16 +37,19 @@ export class Order extends CoreEntity {
   @ManyToOne((type) => User, (user) => user.orders, {
     onDelete: 'SET NULL',
     nullable: true,
+    eager: true,
   })
   customer?: User;
 
   @RelationId((order: Order) => order.customer)
   customerId: number;
 
+  //! eager : true -> entity를 불러올 때마다 자동으로 relation추가
   @Field((type) => User, { nullable: true })
   @ManyToOne((type) => User, (user) => user.riders, {
     onDelete: 'SET NULL',
     nullable: true,
+    eager: true,
   })
   driver?: User;
 
@@ -63,7 +66,7 @@ export class Order extends CoreEntity {
   //? 소유하고 있는 쪽에 jointable을 추가
   //? dish가 어디에 포함되어 있는가는 order기준으로 파악해야 한다
   @Field((type) => [OrderItem])
-  @ManyToMany((type) => OrderItem)
+  @ManyToMany((type) => OrderItem, { eager: true })
   @JoinTable()
   items: OrderItem[];
 
