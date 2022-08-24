@@ -11,6 +11,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { Order } from 'src/orders/entities/orders.entity';
+import { Payment } from 'src/payments/entities/payments.entity';
 
 export enum UserRole {
   Client = 'Client',
@@ -58,6 +59,10 @@ export class User extends CoreEntity {
   @Field((type) => [Order])
   @OneToMany((type) => Order, (order) => order.driver)
   riders: Order[];
+
+  @Field((type) => [Payment])
+  @OneToMany((type) => Payment, (payment) => payment.user)
+  payments: Payment[];
 
   //listener : entity에 이벤트가 발생할 때 실행됨
   //db수정 있을 시 BeforeUpdate필요
