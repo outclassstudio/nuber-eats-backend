@@ -24,6 +24,8 @@ import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/orders.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
 import { CommonModule } from './common/common.module';
+import { PaymentsModule } from './payments/payments.module';
+import { Payment } from './payments/entities/payments.entity';
 
 const TOKEN_KEY = 'x-jwt';
 
@@ -67,6 +69,7 @@ const TOKEN_KEY = 'x-jwt';
         Dish,
         Order,
         OrderItem,
+        Payment,
       ],
     }),
     //graphQL 모듈 임포트
@@ -104,6 +107,7 @@ const TOKEN_KEY = 'x-jwt';
     OrdersModule,
     //!Global로 지정하더라도 appModule에 불러와야 한다
     CommonModule,
+    PaymentsModule,
   ],
   controllers: [],
   providers: [],
