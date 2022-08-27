@@ -1,6 +1,6 @@
 # Outclass Eats Backend
 
-The backend of Nuber Eats
+The backend of Outclass Eats
 
 ## User Entity:
 
