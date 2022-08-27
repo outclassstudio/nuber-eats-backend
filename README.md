@@ -1,4 +1,4 @@
-# Nuber Eats
+# Outclass Eats Backend
 
 The backend of Nuber Eats
 
